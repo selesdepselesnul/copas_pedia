@@ -14,8 +14,9 @@ import wikipedia
 
 form_class = uic.loadUiType('copaspedia.ui')[0]
 
-class MyWindowClass(QWidget, form_class):
+class MainWindowController(QWidget, form_class):
 
+    PAGE = 0
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
@@ -29,7 +30,7 @@ class MyWindowClass(QWidget, form_class):
             self.lang_combo_box.addItem(lang)
 
     def handle_mode_selected(self, mode):
-        if mode == 0:
+        if mode == MainWindowController.PAGE:
             self.title_line_edit.setPlaceholderText('Title')
         else:
             self.title_line_edit.setPlaceholderText('Query')
@@ -46,6 +47,6 @@ class MyWindowClass(QWidget, form_class):
 
 
 app = QApplication(sys.argv)
-myWindow = MyWindowClass(None)
+myWindow = MainWindowController(None)
 myWindow.show()
 app.exec_()
