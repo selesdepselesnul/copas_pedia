@@ -17,7 +17,10 @@ class MyWindowClass(QWidget, form_class):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self.setupUi(self)
-        self.lang_combo_box.addItems(['eng', 'id', 'su'])
+        self.title_line_edit.returnPressed.connect(self.handle_title_pressed)
+
+    def handle_title_pressed(self):
+        print('return')
 
 app = QApplication(sys.argv)
 myWindow = MyWindowClass(None)
