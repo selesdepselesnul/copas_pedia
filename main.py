@@ -1,3 +1,11 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+"""
+author: Moch Deden
+website: http://selesdepselesnul.com
+github : https://github.com/selesdepselesnul
+"""
+
 import wikipedia
-wikipedia.set_lang('id')
-print(wikipedia.page(title='Indonesia').images)
+print(wikipedia.search('indo'))
