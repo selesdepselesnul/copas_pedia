@@ -45,8 +45,7 @@ class MainWindowController(QWidget, form_class):
             print('empty')
 
 
-
 app = QApplication(sys.argv)
-myWindow = MainWindowController(None)
-myWindow.show()
+main_window_controller = MainWindowController(None)
+main_window_controller.show()
 app.exec_()
