@@ -1,1 +1,1 @@
-# copas_pedia
+# copaspedia
