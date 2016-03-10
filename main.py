@@ -17,8 +17,7 @@ class MyWindowClass(QWidget, form_class):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self.setupUi(self)
-
-
+        self.lang_combo_box.addItems(['eng', 'id', 'su'])
 
 app = QApplication(sys.argv)
 myWindow = MyWindowClass(None)

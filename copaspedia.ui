@@ -36,7 +36,7 @@
     <string>title</string>
    </property>
   </widget>
-  <widget class="QComboBox" name="comboBox">
+  <widget class="QComboBox" name="lang_combo_box">
    <property name="geometry">
     <rect>
      <x>40</x>
