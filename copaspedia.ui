@@ -6,29 +6,35 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>633</width>
+    <height>532</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>CopasPedia</string>
   </property>
-  <widget class="QTextEdit" name="textEdit">
+  <widget class="QTextEdit" name="content_text_edit">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>30</y>
-     <width>321</width>
-     <height>131</height>
+     <x>20</x>
+     <y>10</y>
+     <width>591</width>
+     <height>321</height>
     </rect>
+   </property>
+   <property name="documentTitle">
+    <string/>
+   </property>
+   <property name="textInteractionFlags">
+    <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
    </property>
   </widget>
   <widget class="QLineEdit" name="title_line_edit">
    <property name="geometry">
     <rect>
      <x>130</x>
-     <y>170</y>
-     <width>231</width>
+     <y>370</y>
+     <width>481</width>
      <height>22</height>
     </rect>
    </property>
@@ -39,8 +45,8 @@
   <widget class="QComboBox" name="lang_combo_box">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>200</y>
+     <x>20</x>
+     <y>420</y>
      <width>151</width>
      <height>22</height>
     </rect>
@@ -49,8 +55,8 @@
   <widget class="QComboBox" name="filter_combo_box">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>230</y>
+     <x>280</x>
+     <y>420</y>
      <width>151</width>
      <height>22</height>
     </rect>
@@ -59,8 +65,8 @@
   <widget class="QComboBox" name="comboBox_3">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>230</y>
+     <x>460</x>
+     <y>420</y>
      <width>151</width>
      <height>22</height>
     </rect>
@@ -69,8 +75,8 @@
   <widget class="QPushButton" name="download_button">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>260</y>
+     <x>20</x>
+     <y>470</y>
      <width>81</width>
      <height>22</height>
     </rect>
@@ -82,8 +88,8 @@
   <widget class="QComboBox" name="page_mode_combo_box">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>170</y>
+     <x>20</x>
+     <y>370</y>
      <width>91</width>
      <height>22</height>
     </rect>

@@ -38,9 +38,12 @@ class MainWindowController(QWidget, form_class):
     def handle_title_pressed(self):
         title = self.title_line_edit.text()
         if title:
+            wikipedia.set_lang(self.lang_combo_box.currentText())
             wiki = wikipedia.page(title=title)
-            for lang in wiki.languages():
-                print(lang)
+            print(self.lang_combo_box.currentText())
+            # wikipedia.set_lang(self.lang_combo_box.currentText())
+            if self.filter_combo_box.currentText() == 'Content':
+                self.content_text_edit.setPlainText(wiki.content)
         else:
             print('empty')
 
