@@ -49,7 +49,10 @@ class MainWindowController(QWidget, form_class):
                 wikipedia.set_lang(self.lang_combo_box.currentText())
                 wiki = wikipedia.page(title=title)
                 page = self.page_combo_box.currentText()
+                f = open('template.html')
                 self.content_text_browser.setEnabled(True)
+                self.content_text_browser.clear()
+                self.content_text_browser.setHtml(f.read())
                 if page == 'Content':
                     self.content_text_browser.setPlainText(wiki.content)
                 elif page == 'Images':
