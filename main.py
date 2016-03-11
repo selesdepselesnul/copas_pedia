@@ -41,6 +41,7 @@ class MainWindowController(QWidget, form_class):
                 wikipedia.set_lang(self.lang_combo_box.currentText())
                 wiki = wikipedia.page(title=title)
                 page = self.page_combo_box.currentText()
+                self.content_text_browser.setEnabled(True)
                 if page == 'Content':
                     self.content_text_browser.setPlainText(wiki.content)
                 elif page == 'Images':
@@ -50,10 +51,13 @@ class MainWindowController(QWidget, form_class):
                 elif page == 'Summary':
                     self.content_text_browser.setPlainText(wiki.summary)
             else:
-                print('empty')
+                self.content_text_browser.clear()
+                self.content_text_browser.setEnabled(False)
 
         except Exception as e:
             QMessageBox.information(self, 'Not Found', 'Title or Lang Not Found')
+            self.content_text_browser.clear()
+            self.content_text_browser.setEnabled(False)
 
     def handle_anchor_clicked(self, url):
         print(url.toString())

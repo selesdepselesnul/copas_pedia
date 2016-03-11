@@ -47,19 +47,22 @@
    </property>
   </widget>
   <widget class="QTextBrowser" name="content_text_browser">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>10</y>
+     <y>30</y>
      <width>591</width>
-     <height>311</height>
+     <height>271</height>
     </rect>
    </property>
    <property name="openExternalLinks">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="openLinks">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
   </widget>
  </widget>
