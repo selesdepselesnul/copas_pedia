@@ -9,7 +9,7 @@ github : https://github.com/selesdepselesnul
 
 from PyQt5 import uic
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox
 import wikipedia
 from functools import reduce
 import webbrowser
@@ -35,22 +35,25 @@ class MainWindowController(QWidget, form_class):
                                list_link)))
 
     def handle_title_pressed(self):
-        title = self.title_line_edit.text()
-        if title:
-            wikipedia.set_lang(self.lang_combo_box.currentText())
-            wiki = wikipedia.page(title=title)
-            page = self.page_combo_box.currentText()
-            if page == 'Content':
-                self.content_text_browser.setPlainText(wiki.content)
-            elif page == 'Images':
-                self.set_content_link(wiki.images)
-            elif page == 'References':
-                self.set_content_link(wiki.references)
-            elif page == 'Summary':
-                self.content_text_browser.setPlainText(wiki.summary)
+        try:
+            title = self.title_line_edit.text()
+            if title:
+                wikipedia.set_lang(self.lang_combo_box.currentText())
+                wiki = wikipedia.page(title=title)
+                page = self.page_combo_box.currentText()
+                if page == 'Content':
+                    self.content_text_browser.setPlainText(wiki.content)
+                elif page == 'Images':
+                    self.set_content_link(wiki.images)
+                elif page == 'References':
+                    self.set_content_link(wiki.references)
+                elif page == 'Summary':
+                    self.content_text_browser.setPlainText(wiki.summary)
+            else:
+                print('empty')
 
-        else:
-            print('empty')
+        except Exception as e:
+            QMessageBox.information(self, 'Not Found', 'Title or Lang Not Found')
 
     def handle_anchor_clicked(self, url):
         print(url.toString())
