@@ -63,8 +63,11 @@ class MainWindowController(QWidget, form_class):
         print(url.toString())
         webbrowser.open_new_tab(url.toString())
 
-
-app = QApplication(sys.argv)
-main_window_controller = MainWindowController(None)
-main_window_controller.show()
-app.exec_()
+try:
+    app = QApplication(sys.argv)
+    main_window_controller = MainWindowController(None)
+    main_window_controller.show()
+    app.exec_()
+except Exception as e:
+    QMessageBox.information(None, 'Need Connection',
+        'you need internet connection in order to run this app')
