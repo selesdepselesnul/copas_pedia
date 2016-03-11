@@ -14,7 +14,6 @@ from PyQt5.QtGui import QIcon
 import wikipedia
 from functools import reduce
 import webbrowser
-from PyQt5.QtCore import QUrl
 
 form_class = uic.loadUiType('copaspedia.ui')[0]
 
@@ -40,7 +39,8 @@ class MainWindowController(QWidget, form_class):
 
     def handle_about_button(self):
         self.content_text_browser.setEnabled(True)
-        self.content_text_browser.setSource(QUrl('about.html'))
+        f = open('about.html', 'r')
+        self.content_text_browser.setHtml(f.read())
 
     def handle_title_pressed(self):
         try:
