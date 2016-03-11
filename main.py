@@ -11,6 +11,8 @@ from PyQt5 import uic
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget
 import wikipedia
+from functools import reduce
+import webbrowser
 
 form_class = uic.loadUiType('copaspedia.ui')[0]
 
@@ -20,10 +22,17 @@ class MainWindowController(QWidget, form_class):
         QWidget.__init__(self, parent)
         self.setupUi(self)
         self.title_line_edit.returnPressed.connect(self.handle_title_pressed)
+        self.content_text_browser.anchorClicked.connect(self.handle_anchor_clicked)
         self.page_combo_box.addItems(
-            ['Content', 'Images', 'Links', 'References', 'Summary'])
+            ['Content', 'Images', 'References', 'Summary'])
         for lang in sorted(wikipedia.languages()):
             self.lang_combo_box.addItem(lang)
+
+    def set_content_link(self, list_link):
+        self.content_text_browser.setHtml(
+                    reduce(lambda x, y: x + y,
+                           map(lambda x: "<a href='{}'>{}<a><br/>".format(x, x),
+                               list_link)))
 
     def handle_title_pressed(self):
         title = self.title_line_edit.text()
@@ -32,12 +41,20 @@ class MainWindowController(QWidget, form_class):
             wiki = wikipedia.page(title=title)
             page = self.page_combo_box.currentText()
             if page == 'Content':
-                self.content_text_edit.setPlainText(wiki.content)
+                self.content_text_browser.setPlainText(wiki.content)
             elif page == 'Images':
-                self.content_text_edit.setPlainText(wiki.images.pop())
+                self.set_content_link(wiki.images)
+            elif page == 'References':
+                self.set_content_link(wiki.references)
+            elif page == 'Summary':
+                self.content_text_browser.setPlainText(wiki.summary)
 
         else:
             print('empty')
+
+    def handle_anchor_clicked(self, url):
+        print(url.toString())
+        webbrowser.open_new_tab(url.toString())
 
 
 app = QApplication(sys.argv)
