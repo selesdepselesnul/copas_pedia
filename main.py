@@ -10,9 +10,11 @@ github : https://github.com/selesdepselesnul
 from PyQt5 import uic
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox
+from PyQt5.QtGui import QIcon
 import wikipedia
 from functools import reduce
 import webbrowser
+from PyQt5.QtCore import QUrl
 
 form_class = uic.loadUiType('copaspedia.ui')[0]
 
@@ -21,10 +23,12 @@ class MainWindowController(QWidget, form_class):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self.setupUi(self)
+        self.about_button.setIcon(QIcon('about.png'))
         self.title_line_edit.returnPressed.connect(self.handle_title_pressed)
         self.content_text_browser.anchorClicked.connect(self.handle_anchor_clicked)
         self.page_combo_box.addItems(
             ['Content', 'Images', 'References', 'Summary'])
+        self.about_button.clicked.connect(self.handle_about_button)
         for lang in sorted(wikipedia.languages()):
             self.lang_combo_box.addItem(lang)
 
@@ -33,6 +37,10 @@ class MainWindowController(QWidget, form_class):
                     reduce(lambda x, y: x + y,
                            map(lambda x: "<a href='{}'>{}<a><br/>".format(x, x),
                                list_link)))
+
+    def handle_about_button(self):
+        self.content_text_browser.setEnabled(True)
+        self.content_text_browser.setSource(QUrl('about.html'))
 
     def handle_title_pressed(self):
         try:
@@ -71,3 +79,4 @@ try:
 except Exception as e:
     QMessageBox.information(None, 'Need Connection',
         'you need internet connection in order to run this app')
+    print(e)
