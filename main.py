@@ -29,10 +29,10 @@ class MainWindowController(QWidget, form_class):
             self.lang_combo_box.addItem(lang)
 
     def set_content_link(self, list_link):
-        self.content_text_browser.setHtml(tr(
+        self.content_text_browser.setHtml(
                     reduce(lambda x, y: x + y,
                            map(lambda x: "<a href='{}'>{}<a><br/>".format(x, x),
-                               list_link))))
+                               list_link)))
 
     def handle_title_pressed(self):
         try:
