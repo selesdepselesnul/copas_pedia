@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>641</width>
-    <height>361</height>
+    <width>777</width>
+    <height>413</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,7 +20,7 @@
    <string>CopasPedia</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+   <item row="0" column="0" colspan="3">
     <widget class="QTextBrowser" name="content_text_browser">
      <property name="enabled">
       <bool>false</bool>
@@ -46,22 +46,18 @@ p, li { white-space: pre-wrap; }
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QComboBox" name="lang_combo_box"/>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="title_line_edit">
-       <property name="placeholderText">
-        <string>Title</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
    <item row="1" column="0">
     <widget class="QComboBox" name="page_combo_box"/>
+   </item>
+   <item row="1" column="1">
+    <widget class="QComboBox" name="lang_combo_box"/>
+   </item>
+   <item row="1" column="2">
+    <widget class="QLineEdit" name="title_line_edit">
+     <property name="placeholderText">
+      <string>Title</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
