@@ -27,6 +27,7 @@ class MainWindowController(QWidget, form_class):
         self.title_line_edit.returnPressed.connect(self.__extract_from_wiki)
         self.content_text_browser.anchorClicked.connect(self.handle_anchor_clicked)
         self.run_push_button.clicked.connect(self.__extract_from_wiki)
+        self.run_push_button.setIcon(QIcon('run.png'))
         self.setWindowIcon(QIcon('copas-logo.png'))
         self.page_combo_box.addItems(
             ['Content', 'Images', 'References', 'Summary'])
