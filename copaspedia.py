@@ -24,6 +24,8 @@ class AboutWindowController(QDialog, about_form_class):
     def __init__(self, parent):
         QWidget.__init__(self, parent)
         self.setupUi(self)
+        self.about_label.setText(open('about.html', 'r').read())
+        self.license_label.setText(open('license.html', 'r').read())
 
 
 
