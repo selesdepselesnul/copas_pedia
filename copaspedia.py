@@ -24,8 +24,9 @@ class MainWindowController(QWidget, form_class):
         QWidget.__init__(self, parent)
         self.setupUi(self)
         self.about_button.setIcon(QIcon('about.png'))
-        self.title_line_edit.returnPressed.connect(self.handle_title_pressed)
+        self.title_line_edit.returnPressed.connect(self.__extract_from_wiki)
         self.content_text_browser.anchorClicked.connect(self.handle_anchor_clicked)
+        self.run_push_button.clicked.connect(self.__extract_from_wiki)
         self.setWindowIcon(QIcon('copas-logo.png'))
         self.page_combo_box.addItems(
             ['Content', 'Images', 'References', 'Summary'])
@@ -62,7 +63,7 @@ class MainWindowController(QWidget, form_class):
         f = open('about.html', 'r')
         self.content_text_browser.setHtml(f.read())
 
-    def handle_title_pressed(self):
+    def __extract_from_wiki(self):
             title = self.title_line_edit.text()
 
             if title:
