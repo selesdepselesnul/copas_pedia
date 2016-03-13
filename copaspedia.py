@@ -90,18 +90,14 @@ class MainWindowController(QWidget, form_class):
                 self.progress_thread.content_link_arrived.connect(self.set_content_link)
                 self.progress_thread.content_text_arrived.connect(self.set_content_text)
                 self.progress_thread.start()
-                # self.progress_thread.wait()
-                # self.load_progressbar.setMaximum(100)
-                # self.load_progressbar.setValue(100)
             else:
                 self.content_text_browser.clear()
                 self.content_text_browser.setEnabled(False)
 
         except Exception as e:
-            # QMessageBox.information(self, 'Not Found', 'Title or Lang Not Found')
-            # self.content_text_browser.clear()
-            # self.content_text_browser.setEnabled(False)
-            print(e)
+            QMessageBox.information(self, 'Not Found', 'Title or Lang Not Found')
+            self.content_text_browser.clear()
+            self.content_text_browser.setEnabled(False)
 
     def handle_anchor_clicked(self, url):
         print(url.toString())
