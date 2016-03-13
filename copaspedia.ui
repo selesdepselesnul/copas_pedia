@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>777</width>
+    <width>774</width>
     <height>413</height>
    </rect>
   </property>
@@ -20,26 +20,6 @@
    <string>CopasPedia</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="2">
-    <widget class="QPushButton" name="about_button">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QComboBox" name="lang_combo_box"/>
-   </item>
-   <item row="2" column="3">
-    <widget class="QLineEdit" name="title_line_edit">
-     <property name="placeholderText">
-      <string>Title</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QComboBox" name="page_combo_box"/>
-   </item>
    <item row="0" column="0" colspan="4">
     <widget class="QTextBrowser" name="content_text_browser">
      <property name="enabled">
@@ -66,10 +46,30 @@ p, li { white-space: pre-wrap; }
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="1" column="0" colspan="4">
     <widget class="QProgressBar" name="load_progressbar">
      <property name="value">
       <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QComboBox" name="page_combo_box"/>
+   </item>
+   <item row="2" column="1">
+    <widget class="QComboBox" name="lang_combo_box"/>
+   </item>
+   <item row="2" column="2">
+    <widget class="QPushButton" name="about_button">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3">
+    <widget class="QLineEdit" name="title_line_edit">
+     <property name="placeholderText">
+      <string>Title</string>
      </property>
     </widget>
    </item>
