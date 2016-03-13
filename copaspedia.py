@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox
 from PyQt5.QtGui import QIcon
 import wikipedia
 from functools import reduce
+from PyQt5.QtCore import QThread, pyqtSignal
 import webbrowser
 
 form_class = uic.loadUiType('copaspedia.ui')[0]
@@ -31,11 +32,23 @@ class MainWindowController(QWidget, form_class):
         for lang in sorted(wikipedia.languages()):
             self.lang_combo_box.addItem(lang)
 
+
+    def __finish_progress_bar(self):
+        self.load_progressbar.setMaximum(100)
+        self.load_progressbar.setValue(100)
+
     def set_content_link(self, list_link):
+        self.content_text_browser.setEnabled(True)
         self.content_text_browser.setHtml(
                     reduce(lambda x, y: x + y,
                            map(lambda x: "<a href='{}'>{}<a><br/>".format(x, x),
                                list_link)))
+        self.__finish_progress_bar()
+
+    def set_content_text(self, content_text):
+        self.content_text_browser.setEnabled(True)
+        self.content_text_browser.setPlainText(content_text)
+        self.__finish_progress_bar()
 
     def handle_about_button(self):
         self.content_text_browser.setEnabled(True)
@@ -45,30 +58,50 @@ class MainWindowController(QWidget, form_class):
     def handle_title_pressed(self):
         try:
             title = self.title_line_edit.text()
+
             if title:
-                wikipedia.set_lang(self.lang_combo_box.currentText())
-                wiki = wikipedia.page(title=title)
                 page = self.page_combo_box.currentText()
-                f = open('template.html')
-                self.content_text_browser.setEnabled(True)
-                self.content_text_browser.clear()
-                self.content_text_browser.setHtml(f.read())
-                if page == 'Content':
-                    self.content_text_browser.setPlainText(wiki.content)
-                elif page == 'Images':
-                    self.set_content_link(wiki.images)
-                elif page == 'References':
-                    self.set_content_link(wiki.references)
-                elif page == 'Summary':
-                    self.content_text_browser.setPlainText(wiki.summary)
+                wikipedia.set_lang(self.lang_combo_box.currentText())
+                self.load_progressbar.setMinimum(0)
+                self.load_progressbar.setMaximum(0)
+
+                class ProgressThread(QThread):
+
+                    content_link_arrived = pyqtSignal([list])
+                    content_text_arrived = pyqtSignal(['QString'])
+
+                    def run(self):
+
+                        wiki = wikipedia.page(title=title)
+
+                        f = open('template.html')
+                        if page == 'Content':
+                            self.content_text_arrived.emit(wiki.content)
+                        elif page == 'Images':
+                            self.content_link_arrived.emit(wiki.images)
+                        elif page == 'References':
+                            self.content_link_arrived.emit(wiki.references)
+                        elif page == 'Summary':
+                            self.content_text_arrived.emit(wiki.summary)
+
+                        # outer_self.content_text_browser.setPlainText(wiki.summary)
+
+                self.progress_thread = ProgressThread()
+                self.progress_thread.content_link_arrived.connect(self.set_content_link)
+                self.progress_thread.content_text_arrived.connect(self.set_content_text)
+                self.progress_thread.start()
+                # self.progress_thread.wait()
+                # self.load_progressbar.setMaximum(100)
+                # self.load_progressbar.setValue(100)
             else:
                 self.content_text_browser.clear()
                 self.content_text_browser.setEnabled(False)
 
         except Exception as e:
-            QMessageBox.information(self, 'Not Found', 'Title or Lang Not Found')
-            self.content_text_browser.clear()
-            self.content_text_browser.setEnabled(False)
+            # QMessageBox.information(self, 'Not Found', 'Title or Lang Not Found')
+            # self.content_text_browser.clear()
+            # self.content_text_browser.setEnabled(False)
+            print(e)
 
     def handle_anchor_clicked(self, url):
         print(url.toString())
