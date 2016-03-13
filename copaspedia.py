@@ -26,6 +26,7 @@ class MainWindowController(QWidget, form_class):
         self.about_button.setIcon(QIcon('about.png'))
         self.title_line_edit.returnPressed.connect(self.handle_title_pressed)
         self.content_text_browser.anchorClicked.connect(self.handle_anchor_clicked)
+        self.setWindowIcon(QIcon('copas-logo.png'))
         self.page_combo_box.addItems(
             ['Content', 'Images', 'References', 'Summary'])
         self.about_button.clicked.connect(self.handle_about_button)
