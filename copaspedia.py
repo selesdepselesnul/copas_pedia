@@ -9,7 +9,7 @@ github : https://github.com/selesdepselesnul
 
 from PyQt5 import uic
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox
+from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QDialog
 from PyQt5.QtGui import QIcon
 import wikipedia
 from functools import reduce
@@ -17,6 +17,15 @@ from PyQt5.QtCore import QThread, pyqtSignal
 import webbrowser
 
 form_class = uic.loadUiType('copaspedia.ui')[0]
+about_form_class = uic.loadUiType('about.ui')[0]
+
+class AboutWindowController(QDialog, about_form_class):
+
+    def __init__(self, parent):
+        QWidget.__init__(self, parent)
+        self.setupUi(self)
+
+
 
 class MainWindowController(QWidget, form_class):
 
@@ -60,9 +69,9 @@ class MainWindowController(QWidget, form_class):
         self.__load_finished()
 
     def handle_about_button(self):
-        self.content_text_browser.setEnabled(True)
-        f = open('about.html', 'r')
-        self.content_text_browser.setHtml(f.read())
+        about_window_controller = AboutWindowController(self)
+        about_window_controller.setModal(True)
+        about_window_controller.exec_()
 
     def __extract_from_wiki(self):
             title = self.title_line_edit.text()
