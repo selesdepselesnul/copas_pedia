@@ -24,8 +24,8 @@ class AboutWindowController(QDialog, about_form_class):
     def __init__(self, parent):
         QWidget.__init__(self, parent)
         self.setupUi(self)
-        self.about_label.setText(open('about.html', 'r').read())
-        self.license_label.setText(open('license.html', 'r').read())
+        self.about_label.setText(open('templates/about.html', 'r').read())
+        self.license_label.setText(open('templates/license.html', 'r').read())
 
 
 
@@ -93,7 +93,7 @@ class MainWindowController(QWidget, form_class):
                     def run(self):
                         try:
                             wiki = wikipedia.page(title=title)
-                            f = open('template.html')
+                            f = open('templates/template.html')
                             if page == 'Content':
                                 self.content_text_arrived.emit(wiki.content)
                             elif page == 'Images':
