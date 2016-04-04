@@ -1,3 +1,8 @@
+"""
+author: Moch Deden
+website: http://selesdepselesnul.com
+github : https://github.com/selesdepselesnul
+"""
 from PyQt5 import uic
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QDialog
