@@ -34,12 +34,12 @@ class MainWindowController(QWidget, form_class):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self.setupUi(self)
-        self.about_button.setIcon(QIcon('about.png'))
+        self.about_button.setIcon(QIcon('images/about.png'))
         self.title_line_edit.returnPressed.connect(self.__extract_from_wiki)
         self.content_text_browser.anchorClicked.connect(self.handle_anchor_clicked)
         self.run_push_button.clicked.connect(self.__extract_from_wiki)
-        self.run_push_button.setIcon(QIcon('run.png'))
-        self.setWindowIcon(QIcon('copas-logo.png'))
+        self.run_push_button.setIcon(QIcon('images/run.png'))
+        self.setWindowIcon(QIcon('images/copas-logo.png'))
         self.page_combo_box.addItems(
             ['Content', 'Images', 'References', 'Summary'])
         self.about_button.clicked.connect(self.handle_about_button)
