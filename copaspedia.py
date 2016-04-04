@@ -16,8 +16,8 @@ from functools import reduce
 from PyQt5.QtCore import QThread, pyqtSignal
 import webbrowser
 
-form_class = uic.loadUiType('copaspedia.ui')[0]
-about_form_class = uic.loadUiType('about.ui')[0]
+form_class = uic.loadUiType('ui/copaspedia.ui')[0]
+about_form_class = uic.loadUiType('ui/about.ui')[0]
 
 class AboutWindowController(QDialog, about_form_class):
 
