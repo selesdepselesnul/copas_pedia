@@ -1,6 +1,6 @@
 # copaspedia
 <h4>
-<img src="copas-logo-big.png"/>
+<img src="images/copas-logo-big.png"/>
 <p>CopasPedia is simple tool for extracting information from your favourite wiki page</p>
 <p>Developed By Moch Deden</p>
 <p><a href="http://selesdepselesnul.com">http://selesdepselesnul.com</a></p>
