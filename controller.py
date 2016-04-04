@@ -37,7 +37,7 @@ class MainWindowController(QWidget, form_class):
         self.run_push_button.setIcon(QIcon('images/run.png'))
         self.setWindowIcon(QIcon('images/copas-logo.png'))
         self.page_combo_box.addItems(
-            ['Content', 'Images', 'References', 'Summary'])
+            ['Content', 'Images Links', 'References Links', 'Summary'])
         self.about_button.clicked.connect(self.handle_about_button)
         for lang in sorted(wikipedia.languages()):
             self.lang_combo_box.addItem(lang)
@@ -92,9 +92,9 @@ class MainWindowController(QWidget, form_class):
                             f = open('templates/template.html')
                             if page == 'Content':
                                 self.content_text_arrived.emit(wiki.content)
-                            elif page == 'Images':
+                            elif page == 'Images Links':
                                 self.content_link_arrived.emit(wiki.images)
-                            elif page == 'References':
+                            elif page == 'References Links':
                                 self.content_link_arrived.emit(wiki.references)
                             elif page == 'Summary':
                                 self.content_text_arrived.emit(wiki.summary)
