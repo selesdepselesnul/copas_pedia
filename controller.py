@@ -5,12 +5,13 @@ github : https://github.com/selesdepselesnul
 """
 from PyQt5 import uic
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QDialog
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QMessageBox, QDialog
 from PyQt5.QtGui import QIcon
 import wikipedia
 from functools import reduce
 from PyQt5.QtCore import QThread, pyqtSignal
 import webbrowser
+import wget
 
 form_class = uic.loadUiType('ui/copaspedia.ui')[0]
 about_form_class = uic.loadUiType('ui/about.ui')[0]
@@ -25,20 +26,20 @@ class AboutWindowController(QDialog, about_form_class):
 
 
 
-class MainWindowController(QWidget, form_class):
+class MainWindowController(QMainWindow, form_class):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self.setupUi(self)
-        self.about_button.setIcon(QIcon('images/about.png'))
+        self.about_action.setIcon(QIcon('images/about.png'))
         self.title_line_edit.returnPressed.connect(self.__extract_from_wiki)
         self.content_text_browser.anchorClicked.connect(self.handle_anchor_clicked)
         self.run_push_button.clicked.connect(self.__extract_from_wiki)
         self.run_push_button.setIcon(QIcon('images/run.png'))
         self.setWindowIcon(QIcon('images/copas-logo.png'))
         self.page_combo_box.addItems(
-            ['Content', 'Images Links', 'References Links', 'Summary'])
-        self.about_button.clicked.connect(self.handle_about_button)
+            ['Content', 'Images', 'Summary', 'Images Links', 'References Links'])
+        self.about_action.triggered.connect(self.handle_about_menu_action)
         for lang in sorted(wikipedia.languages()):
             self.lang_combo_box.addItem(lang)
 
@@ -66,7 +67,7 @@ class MainWindowController(QWidget, form_class):
         self.content_text_browser.setEnabled(False)
         self.__load_finished()
 
-    def handle_about_button(self):
+    def handle_about_menu_action(self):
         about_window_controller = AboutWindowController(self)
         about_window_controller.setModal(True)
         about_window_controller.exec_()
@@ -92,12 +93,17 @@ class MainWindowController(QWidget, form_class):
                             f = open('templates/template.html')
                             if page == 'Content':
                                 self.content_text_arrived.emit(wiki.content)
+                            elif page == 'Images':
+                                print(wiki.images)
+                                for i in wiki.images:
+                                    wget.download(i)
+                            elif page == 'Summary':
+                                self.content_text_arrived.emit(wiki.summary)
                             elif page == 'Images Links':
                                 self.content_link_arrived.emit(wiki.images)
                             elif page == 'References Links':
                                 self.content_link_arrived.emit(wiki.references)
-                            elif page == 'Summary':
-                                self.content_text_arrived.emit(wiki.summary)
+                         
 
                         except:
                             self.error_occurred.emit()
