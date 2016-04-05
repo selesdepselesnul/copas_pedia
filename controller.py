@@ -4,7 +4,7 @@ website: http://selesdepselesnul.com
 github : https://github.com/selesdepselesnul
 """
 from PyQt5 import uic
-import sys
+import sys, os
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QMessageBox, QDialog
 from PyQt5.QtGui import QIcon
 import wikipedia
@@ -15,6 +15,17 @@ import wget
 
 form_class = uic.loadUiType('ui/copaspedia.ui')[0]
 about_form_class = uic.loadUiType('ui/about.ui')[0]
+preferences_form_class = uic.loadUiType('ui/preferences.ui')[0]
+
+
+
+class PreferencesWindowController(QDialog, preferences_form_class):
+
+    def __init__(self, parent):
+        QWidget.__init__(self, parent)
+        self.setupUi(self)
+        self.output_path_line_edit.setText(os.getcwd())
+
 
 class AboutWindowController(QDialog, about_form_class):
 
@@ -35,6 +46,7 @@ class MainWindowController(QMainWindow, form_class):
         self.preferences_action.setIcon(QIcon('images/preferences.png'))
         self.quit_action.setIcon(QIcon('images/quit.png'))
         self.quit_action.triggered.connect(lambda : exit(0))
+        self.preferences_action.triggered.connect(self.handle_preferences_menu_action)
         self.title_line_edit.returnPressed.connect(self.__extract_from_wiki)
         self.content_text_browser.anchorClicked.connect(self.handle_anchor_clicked)
         self.run_push_button.clicked.connect(self.__extract_from_wiki)
@@ -74,6 +86,12 @@ class MainWindowController(QMainWindow, form_class):
         about_window_controller = AboutWindowController(self)
         about_window_controller.setModal(True)
         about_window_controller.exec_()
+
+    def handle_preferences_menu_action(self):
+        preferences_window_controller = PreferencesWindowController(self)
+        preferences_window_controller.setModal(True)
+        preferences_window_controller.exec_()
+
 
     def __extract_from_wiki(self):
             title = self.title_line_edit.text()
