@@ -8,6 +8,7 @@ import sys, os
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QMessageBox, QDialog
 from PyQt5.QtGui import QIcon
 import wikipedia
+from pathlib import PurePath
 from functools import reduce
 from PyQt5.QtCore import QThread, pyqtSignal
 import webbrowser
@@ -20,12 +21,8 @@ preferences_form_class = uic.loadUiType('ui/preferences.ui')[0]
 class Preferences:
 
     output_path = os.getcwd()
-    image_format_dict = {
-        'png' : True,
-        'svg' : True,
-        'jpg' : True,
-        'gif' : True
-    }
+
+    valid_image_formats = {'.png', '.jpg'}
 
 class PreferencesWindowController(QDialog, preferences_form_class):
 
@@ -38,14 +35,15 @@ class PreferencesWindowController(QDialog, preferences_form_class):
         self._set_checkbox()
 
     def _set_checkbox(self):
-        if Preferences.image_format_dict['png']:
-            self.png_checkbox.setChecked(True)
-        if Preferences.image_format_dict['svg']:
-            self.svg_checkbox.setChecked(True)
-        if Preferences.image_format_dict['jpg']:
-            self.jpg_checkbox.setChecked(True)
-        if Preferences.image_format_dict['gif']:
-            self.gif_checkbox.setChecked(True)
+        for i in Preferences.valid_image_formats:
+            if i == '.png':
+                self.png_checkbox.setChecked(True)
+            elif i == '.svg':
+                self.svg_checkbox.setChecked(True)
+            elif i == '.jpg':
+                self.jpg_checkbox.setChecked(True)
+            elif i == '.gif':
+                self.gif_checkbox.setChecked(True)
 
     def handle_edit_button(self):
         if self.edit_button.text() == 'Edit':
@@ -148,9 +146,13 @@ class MainWindowController(QMainWindow, form_class):
                             if page == 'Content':
                                 self.content_text_arrived.emit(wiki.content)
                             elif page == 'Images':
+
                                 print(wiki.images)
+
                                 for i in wiki.images:
-                                    wget.download(i)
+                                    if PurePath(i).suffix in Preferences.valid_image_formats:
+                                        print(i)
+
                             elif page == 'Summary':
                                 self.content_text_arrived.emit(wiki.summary)
                             elif page == 'Images Links':
