@@ -25,8 +25,6 @@ class Preferences:
 
     valid_image_formats = {'.jpg', '.svg'}
 
-    # image_dir = 'images_out'
-
 class PreferencesWindowController(QDialog, preferences_form_class):
 
     def __init__(self, parent):
@@ -98,6 +96,7 @@ class MainWindowController(QMainWindow, form_class):
         self.load_progressbar.setValue(100)
 
     def set_content_image(self, list_image, des_dir):
+        self.content_text_browser.clear()
         self.content_text_browser.setEnabled(True)
         for i in list_image:
             full_path = html.escape(des_dir + '/' + PurePath(i).name)
