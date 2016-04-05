@@ -22,7 +22,7 @@ class Preferences:
 
     output_path = os.getcwd()
 
-    valid_image_formats = {'.png', '.jpg'}
+    valid_image_formats = {'.png', '.svg'}
 
 class PreferencesWindowController(QDialog, preferences_form_class):
 
@@ -148,10 +148,13 @@ class MainWindowController(QMainWindow, form_class):
                             elif page == 'Images':
 
                                 print(wiki.images)
+                                image_des = title + '_images'
+                                os.mkdir(image_des)
 
                                 for i in wiki.images:
                                     if PurePath(i).suffix in Preferences.valid_image_formats:
-                                        print(i)
+                                        wget.download(i, out=image_des)
+
 
                             elif page == 'Summary':
                                 self.content_text_arrived.emit(wiki.summary)
