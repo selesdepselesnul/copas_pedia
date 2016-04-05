@@ -91,8 +91,8 @@ p, li { white-space: pre-wrap; }
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionPreferences"/>
-    <addaction name="actionExport_As"/>
+    <addaction name="preferences_action"/>
+    <addaction name="quit_action"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -103,7 +103,7 @@ p, li { white-space: pre-wrap; }
    <addaction name="menuFile"/>
    <addaction name="menuHelp"/>
   </widget>
-  <action name="actionPreferences">
+  <action name="preferences_action">
    <property name="text">
     <string>Preferences</string>
    </property>
@@ -118,7 +118,7 @@ p, li { white-space: pre-wrap; }
     <string>About QT</string>
    </property>
   </action>
-  <action name="actionExport_As">
+  <action name="quit_action">
    <property name="text">
     <string>Quit</string>
    </property>
