@@ -25,6 +25,15 @@ class PreferencesWindowController(QDialog, preferences_form_class):
         QWidget.__init__(self, parent)
         self.setupUi(self)
         self.output_path_line_edit.setText(os.getcwd())
+        self.edit_button.clicked.connect(self.handle_edit_button)
+
+    def handle_edit_button(self):
+        if self.edit_button.text() == 'Edit':
+            self.edit_button.setText('Save')
+            self.output_path_line_edit.setEnabled(True)
+        else:
+            self.edit_button.setText('Edit')
+            self.output_path_line_edit.setEnabled(False)
 
 
 class AboutWindowController(QDialog, about_form_class):
