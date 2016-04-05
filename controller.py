@@ -14,6 +14,7 @@ from PyQt5.QtCore import QThread, pyqtSignal
 import webbrowser
 import wget
 import html
+import sqlite3
 
 form_class = uic.loadUiType('ui/copaspedia.ui')[0]
 about_form_class = uic.loadUiType('ui/about.ui')[0]
@@ -21,14 +22,49 @@ preferences_form_class = uic.loadUiType('ui/preferences.ui')[0]
 
 class Preferences:
 
+    DB_FILE_NAME = 'cucok.db'
     output_path = os.getcwd()
+    valid_image_formats = []
 
-    valid_image_formats = {'.jpg', '.svg'}
+    @classmethod
+    def init(cls):
+        if not os.path.exists(cls.DB_FILE_NAME):
+            os.mknod(cls.DB_FILE_NAME)
+            conn = sqlite3.connect(cls.DB_FILE_NAME)
+            c = conn.cursor()
+            c.execute('CREATE TABLE OutputPath(name TEXT)')
+            c.execute('CREATE TABLE ValidImageFormats(name TEXT, isActive INTEGER DEFAULT 1)')
+            c.execute("INSERT INTO OutputPath VALUES (?)", (cls.output_path, ))
+            for valid_image in ['.png', '.svg', '.jpg', '.gif']:
+                c.execute("INSERT INTO ValidImageFormats (name) VALUES (?)", (valid_image, ))
+            conn.commit()
+        else:
+            conn = sqlite3.connect(cls.DB_FILE_NAME)
+            c = conn.cursor()
+            c.execute('SELECT * FROM OutputPath')
+            cls.output_path = c.fetchone()[0]
+            c.execute('SELECT * FROM ValidImageFormats')
+            val = c.fetchone()
+            while val is not None:
+                if val[1] == 1:
+                    print(val)
+                    cls.valid_image_formats.append(val[0])
+                val = c.fetchone()
+        c.close()
+
+    @classmethod
+    def set(cls, image, is_active):
+        conn = sqlite3.connect(cls.DB_FILE_NAME)
+        c = conn.cursor()
+        c.execute('UPDATE ValidImageFormats SET isActive = ? WHERE name = ?', (is_active, image))
+        conn.commit()
+
 
 class PreferencesWindowController(QDialog, preferences_form_class):
 
     def __init__(self, parent):
         QWidget.__init__(self, parent)
+        Preferences.init()
         self.setupUi(self)
         self.output_path_line_edit.setText(Preferences.output_path)
         
@@ -39,6 +75,7 @@ class PreferencesWindowController(QDialog, preferences_form_class):
 
     def _set_checkbox(self):
         for i in Preferences.valid_image_formats:
+            print(i)
             if i == '.png':
                 self.png_checkbox.setChecked(True)
             elif i == '.svg':
@@ -61,6 +98,29 @@ class PreferencesWindowController(QDialog, preferences_form_class):
             self.image_format_groupbox.setEnabled(False)
             self.output_path_line_edit.setEnabled(False)
             self.output_path_button.setEnabled(False)
+            self._save_preferences()
+
+    def _save_preferences(self):
+        if self.png_checkbox.isChecked():
+            Preferences.set('.png', 1)
+        else:
+            Preferences.set('.png', 0)
+        
+        if self.svg_checkbox.isChecked():
+            Preferences.set('.svg', 1)
+        else:
+            Preferences.set('.svg', 0)
+
+        if self.jpg_checkbox.isChecked():
+            Preferences.set('.jpg', 1)
+        else:
+            Preferences.set('.jpg', 0)
+          
+        if self.gif_checkbox.isChecked():
+            Preferences.set('.gif', 1)
+        else:
+            Preferences.set('.gif', 0)
+        
 
     def handle_choose_output_path(self):
         dialog = QFileDialog(self)
