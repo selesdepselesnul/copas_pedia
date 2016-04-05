@@ -30,9 +30,13 @@ class PreferencesWindowController(QDialog, preferences_form_class):
     def handle_edit_button(self):
         if self.edit_button.text() == 'Edit':
             self.edit_button.setText('Save')
+            self.output_path_label.setEnabled(True)
+            self.image_format_groupbox.setEnabled(True)
             self.output_path_line_edit.setEnabled(True)
         else:
             self.edit_button.setText('Edit')
+            self.output_path_label.setEnabled(False)
+            self.image_format_groupbox.setEnabled(False)
             self.output_path_line_edit.setEnabled(False)
 
 
