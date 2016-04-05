@@ -17,14 +17,25 @@ form_class = uic.loadUiType('ui/copaspedia.ui')[0]
 about_form_class = uic.loadUiType('ui/about.ui')[0]
 preferences_form_class = uic.loadUiType('ui/preferences.ui')[0]
 
+class Preferences:
 
+    output_path = os.getcwd()
+    imagesFormat = ['png']
+
+    @classmethod
+    def add_image_format(cls, image_format):
+        cls.image_format.append(image_format)
+
+    @classmethod
+    def remove_image_format(cls, image_format):
+        cls.image_format.remove(image_format)
 
 class PreferencesWindowController(QDialog, preferences_form_class):
 
     def __init__(self, parent):
         QWidget.__init__(self, parent)
         self.setupUi(self)
-        self.output_path_line_edit.setText(os.getcwd())
+        self.output_path_line_edit.setText(Preferences.output_path)
         self.edit_button.clicked.connect(self.handle_edit_button)
 
     def handle_edit_button(self):
