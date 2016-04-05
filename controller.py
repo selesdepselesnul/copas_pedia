@@ -13,6 +13,7 @@ from functools import reduce
 from PyQt5.QtCore import QThread, pyqtSignal
 import webbrowser
 import wget
+import html
 
 form_class = uic.loadUiType('ui/copaspedia.ui')[0]
 about_form_class = uic.loadUiType('ui/about.ui')[0]
@@ -22,7 +23,9 @@ class Preferences:
 
     output_path = os.getcwd()
 
-    valid_image_formats = {'.png', '.svg'}
+    valid_image_formats = {'.jpg', '.svg'}
+
+    # image_dir = 'images_out'
 
 class PreferencesWindowController(QDialog, preferences_form_class):
 
@@ -94,6 +97,15 @@ class MainWindowController(QMainWindow, form_class):
         self.load_progressbar.setMaximum(100)
         self.load_progressbar.setValue(100)
 
+    def set_content_image(self, list_image, des_dir):
+        self.content_text_browser.setEnabled(True)
+        for i in list_image:
+            full_path = html.escape(des_dir + '/' + PurePath(i).name)
+            self.content_text_browser.append(
+                    "<img src='{}' title='store at : {}'/><br/>".format(full_path, full_path))
+         
+        self.__load_finished()
+
     def set_content_link(self, list_link):
         self.content_text_browser.setEnabled(True)
         self.content_text_browser.setHtml(
@@ -137,6 +149,7 @@ class MainWindowController(QMainWindow, form_class):
 
                     content_link_arrived = pyqtSignal([list])
                     content_text_arrived = pyqtSignal(['QString'])
+                    content_image_arrived = pyqtSignal([list, 'QString'])
                     error_occurred = pyqtSignal()
 
                     def run(self):
@@ -148,13 +161,16 @@ class MainWindowController(QMainWindow, form_class):
                             elif page == 'Images':
 
                                 print(wiki.images)
-                                image_des = title + '_images'
-                                os.mkdir(image_des)
+                                if not os.path.exists(title):
+                                    os.mkdir(title)
 
+                                valid_images = []
                                 for i in wiki.images:
                                     if PurePath(i).suffix in Preferences.valid_image_formats:
-                                        wget.download(i, out=image_des)
-
+                                        wget.download(i, out=title)
+                                        valid_images.append(i)
+                                self.content_image_arrived.emit(valid_images, 
+                                    Preferences.output_path + '/' + title)
 
                             elif page == 'Summary':
                                 self.content_text_arrived.emit(wiki.summary)
@@ -170,6 +186,7 @@ class MainWindowController(QMainWindow, form_class):
                 self.progress_thread = ProgressThread()
                 self.progress_thread.content_link_arrived.connect(self.set_content_link)
                 self.progress_thread.content_text_arrived.connect(self.set_content_text)
+                self.progress_thread.content_image_arrived.connect(self.set_content_image)
                 self.progress_thread.error_occurred.connect(self.handle_error_occurred)
                 self.progress_thread.start()
             else:
