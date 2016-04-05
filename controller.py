@@ -5,7 +5,7 @@ github : https://github.com/selesdepselesnul
 """
 from PyQt5 import uic
 import sys, os
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QMessageBox, QDialog
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QMessageBox, QDialog, QFileDialog
 from PyQt5.QtGui import QIcon
 import wikipedia
 from pathlib import PurePath
@@ -31,7 +31,9 @@ class PreferencesWindowController(QDialog, preferences_form_class):
         QWidget.__init__(self, parent)
         self.setupUi(self)
         self.output_path_line_edit.setText(Preferences.output_path)
+        
         self.edit_button.clicked.connect(self.handle_edit_button)
+        self.output_path_button.clicked.connect(self.handle_choose_output_path)
 
         self._set_checkbox()
 
@@ -52,11 +54,20 @@ class PreferencesWindowController(QDialog, preferences_form_class):
             self.output_path_label.setEnabled(True)
             self.image_format_groupbox.setEnabled(True)
             self.output_path_line_edit.setEnabled(True)
+            self.output_path_button.setEnabled(True)
         else:
             self.edit_button.setText('Edit')
             self.output_path_label.setEnabled(False)
             self.image_format_groupbox.setEnabled(False)
             self.output_path_line_edit.setEnabled(False)
+            self.output_path_button.setEnabled(False)
+
+    def handle_choose_output_path(self):
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.Directory);
+        if dialog.exec_():
+            self.output_path_line_edit.setText(
+                dialog.selectedFiles()[0])
 
 
 class AboutWindowController(QDialog, about_form_class):
