@@ -20,15 +20,12 @@ preferences_form_class = uic.loadUiType('ui/preferences.ui')[0]
 class Preferences:
 
     output_path = os.getcwd()
-    imagesFormat = ['png']
-
-    @classmethod
-    def add_image_format(cls, image_format):
-        cls.image_format.append(image_format)
-
-    @classmethod
-    def remove_image_format(cls, image_format):
-        cls.image_format.remove(image_format)
+    image_format_dict = {
+        'png' : True,
+        'svg' : True,
+        'jpg' : True,
+        'gif' : True
+    }
 
 class PreferencesWindowController(QDialog, preferences_form_class):
 
@@ -37,6 +34,18 @@ class PreferencesWindowController(QDialog, preferences_form_class):
         self.setupUi(self)
         self.output_path_line_edit.setText(Preferences.output_path)
         self.edit_button.clicked.connect(self.handle_edit_button)
+
+        self._set_checkbox()
+
+    def _set_checkbox(self):
+        if Preferences.image_format_dict['png']:
+            self.png_checkbox.setChecked(True)
+        if Preferences.image_format_dict['svg']:
+            self.svg_checkbox.setChecked(True)
+        if Preferences.image_format_dict['jpg']:
+            self.jpg_checkbox.setChecked(True)
+        if Preferences.image_format_dict['gif']:
+            self.gif_checkbox.setChecked(True)
 
     def handle_edit_button(self):
         if self.edit_button.text() == 'Edit':
