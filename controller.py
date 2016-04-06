@@ -181,6 +181,8 @@ class MainWindowController(QMainWindow, form_class):
     def __load_finished(self):
         self.load_progressbar.setMaximum(100)
         self.load_progressbar.setValue(100)
+        self.run_push_button.setIcon(QIcon('images/run.png'))
+        self.run_push_button.setText('Download')
 
     def set_content_image(self, list_image, des_dir):
         self.content_text_browser.clear()
