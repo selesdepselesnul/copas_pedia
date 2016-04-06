@@ -39,6 +39,7 @@ class Preferences:
                 c.execute("INSERT INTO ValidImageFormats (name) VALUES (?)", (valid_image, ))
             conn.commit()
         else:
+            cls.valid_image_formats.clear()
             conn = sqlite3.connect(cls.DB_FILE_NAME)
             c = conn.cursor()
             c.execute('SELECT * FROM OutputPath')
