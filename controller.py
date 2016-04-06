@@ -29,15 +29,21 @@ class Preferences:
     @classmethod
     def init(cls):
         if not os.path.exists(cls.DB_FILE_NAME):
+            cls.output_path = os.getcwd() 
+            cls.valid_image_formats = ['.png', '.svg', '.jpg', '.gif']
+
             os.mknod(cls.DB_FILE_NAME)
             conn = sqlite3.connect(cls.DB_FILE_NAME)
             c = conn.cursor()
+            cwd = os.getcwd()
             c.execute('CREATE TABLE OutputPath(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)')
             c.execute('CREATE TABLE ValidImageFormats(name TEXT, isActive INTEGER DEFAULT 1)')
-            c.execute("INSERT INTO OutputPath (name) VALUES (?)", (os.getcwd(), ))
-            for valid_image in ['.png', '.svg', '.jpg', '.gif']:
+            c.execute("INSERT INTO OutputPath (name) VALUES (?)", (cls.output_path , ))
+
+            for valid_image in cls.valid_image_formats:
                 c.execute("INSERT INTO ValidImageFormats (name) VALUES (?)", (valid_image, ))
             conn.commit()
+           
         else:
             cls.valid_image_formats.clear()
             conn = sqlite3.connect(cls.DB_FILE_NAME)
@@ -239,6 +245,7 @@ class MainWindowController(QMainWindow, form_class):
                 content_text_arrived = pyqtSignal(['QString'])
                 content_image_arrived = pyqtSignal([list, 'QString'])
                 error_occurred = pyqtSignal()
+                valid_images = []
 
                 def run(self):
                     try:
