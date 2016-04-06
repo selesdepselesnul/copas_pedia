@@ -165,10 +165,11 @@ class MainWindowController(QMainWindow, form_class):
         self.quit_action.setIcon(QIcon('images/quit.png'))
         self.quit_action.triggered.connect(lambda : exit(0))
         self.preferences_action.triggered.connect(self.handle_preferences_menu_action)
-        self.title_line_edit.returnPressed.connect(self.__extract_from_wiki)
+        self.title_line_edit.returnPressed.connect(self._extract_from_wiki)
         self.content_text_browser.anchorClicked.connect(self.handle_anchor_clicked)
-        self.run_push_button.clicked.connect(self.__extract_from_wiki)
+        self.run_push_button.clicked.connect(self.handle_run_button)
         self.run_push_button.setIcon(QIcon('images/run.png'))
+        self.run_push_button.setText('Download')
         self.setWindowIcon(QIcon('images/copas-logo.png'))
         self.page_combo_box.addItems(
             ['Content', 'Images', 'Summary', 'Images Links', 'References Links'])
@@ -222,67 +223,80 @@ class MainWindowController(QMainWindow, form_class):
         preferences_window_controller.setModal(True)
         preferences_window_controller.exec_()
 
+    def _extract_from_wiki(self):
+        title = self.title_line_edit.text()
+        if title:
+            page = self.page_combo_box.currentText()
+            wikipedia.set_lang(self.lang_combo_box.currentText())
+            self.load_progressbar.setMinimum(0)
+            self.load_progressbar.setMaximum(0)
 
-    def __extract_from_wiki(self):
-            title = self.title_line_edit.text()
+            class ProgressThread(QThread, QWidget):
 
-            if title:
-                page = self.page_combo_box.currentText()
-                wikipedia.set_lang(self.lang_combo_box.currentText())
-                self.load_progressbar.setMinimum(0)
-                self.load_progressbar.setMaximum(0)
+                content_link_arrived = pyqtSignal([list])
+                content_text_arrived = pyqtSignal(['QString'])
+                content_image_arrived = pyqtSignal([list, 'QString'])
+                error_occurred = pyqtSignal()
 
-                class ProgressThread(QThread, QWidget):
+                def run(self):
+                    try:
+                        wiki = wikipedia.page(title=title)
+                        f = open('templates/template.html')
+                        if page == 'Content':
+                            self.content_text_arrived.emit(wiki.content)
+                        elif page == 'Images':
 
-                    content_link_arrived = pyqtSignal([list])
-                    content_text_arrived = pyqtSignal(['QString'])
-                    content_image_arrived = pyqtSignal([list, 'QString'])
-                    error_occurred = pyqtSignal()
+                            print(wiki.images)
 
-                    def run(self):
-                        try:
-                            wiki = wikipedia.page(title=title)
-                            f = open('templates/template.html')
-                            if page == 'Content':
-                                self.content_text_arrived.emit(wiki.content)
-                            elif page == 'Images':
+                            self.des_dir = Preferences.output_path + '/' + title 
+                            self.valid_images = []
+                            if not os.path.exists(self.des_dir):
+                                print(self.des_dir)
+                                os.mkdir(self.des_dir)   
 
-                                print(wiki.images)
+                            for i in wiki.images:
+                                if PurePath(i).suffix in Preferences.valid_image_formats:
+                                    print(i)
+                                    print(self.des_dir)
+                                    wget.download(i, out=self.des_dir)
+                                    self.valid_images.append(i)
+                            self.content_image_arrived.emit(self.valid_images, self.des_dir)
 
-                                des_dir = Preferences.output_path + '/' + title 
-                                valid_images = []
-                                if not os.path.exists(des_dir):
-                                    print(des_dir)
-                                    os.mkdir(des_dir)   
-
-                                for i in wiki.images:
-                                    if PurePath(i).suffix in Preferences.valid_image_formats:
-                                        print(i)
-                                        print(des_dir)
-                                        wget.download(i, out=des_dir)
-                                        valid_images.append(i)
-                                self.content_image_arrived.emit(valid_images, des_dir)
-
-                            elif page == 'Summary':
-                                self.content_text_arrived.emit(wiki.summary)
-                            elif page == 'Images Links':
-                                self.content_link_arrived.emit(wiki.images)
-                            elif page == 'References Links':
-                                self.content_link_arrived.emit(wiki.references)
+                        elif page == 'Summary':
+                            self.content_text_arrived.emit(wiki.summary)
+                        elif page == 'Images Links':
+                            self.content_link_arrived.emit(wiki.images)
+                        elif page == 'References Links':
+                            self.content_link_arrived.emit(wiki.references)
                          
 
-                        except:
-                            self.error_occurred.emit()
+                    except:
+                        self.error_occurred.emit()
 
-                self.progress_thread = ProgressThread()
-                self.progress_thread.content_link_arrived.connect(self.set_content_link)
-                self.progress_thread.content_text_arrived.connect(self.set_content_text)
-                self.progress_thread.content_image_arrived.connect(self.set_content_image)
-                self.progress_thread.error_occurred.connect(self.handle_error_occurred)
-                self.progress_thread.start()
+            self.progress_thread = ProgressThread()
+            self.progress_thread.content_link_arrived.connect(self.set_content_link)
+            self.progress_thread.content_text_arrived.connect(self.set_content_text)
+            self.progress_thread.content_image_arrived.connect(self.set_content_image)
+            self.progress_thread.error_occurred.connect(self.handle_error_occurred)
+            self.progress_thread.start()
+        else:
+            self.content_text_browser.clear()
+            self.content_text_browser.setEnabled(False)
+
+    def handle_run_button(self):
+            if self.run_push_button.text() == 'Download':
+                self._extract_from_wiki()
+                self.run_push_button.setIcon(QIcon('images/stop.png'))
+                self.run_push_button.setText('Stop')
             else:
-                self.content_text_browser.clear()
-                self.content_text_browser.setEnabled(False)
+                self.run_push_button.setIcon(QIcon('images/run.png'))
+                self.run_push_button.setText('Download')
+                self.progress_thread.content_image_arrived.emit(self.progress_thread.valid_images, 
+                    self.progress_thread.des_dir)
+                self.progress_thread.terminate()
+
+
+           
 
     def handle_anchor_clicked(self, url):
         print(url.toString())
