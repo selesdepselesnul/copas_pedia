@@ -163,6 +163,10 @@ class AboutWindowController(QDialog, about_form_class):
 
 class MainWindowController(QMainWindow, form_class):
 
+    WIKIPEDIA = 0
+    YOUTUBE = 1
+    current_source = WIKIPEDIA
+
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self.setupUi(self)
@@ -170,8 +174,9 @@ class MainWindowController(QMainWindow, form_class):
         self.preferences_action.setIcon(QIcon('images/preferences.png'))
         self.quit_action.setIcon(QIcon('images/quit.png'))
         self.quit_action.triggered.connect(lambda : exit(0))
+        self.source_tab.currentChanged.connect(self.handle_choosen_source_tab)
         self.preferences_action.triggered.connect(self.handle_preferences_menu_action)
-        self.title_line_edit.returnPressed.connect(self._extract_from_wiki)
+        
         self.content_text_browser.anchorClicked.connect(self.handle_anchor_clicked)
         self.run_push_button.clicked.connect(self.handle_run_button)
         self.run_push_button.setIcon(QIcon('images/run.png'))
@@ -225,6 +230,16 @@ class MainWindowController(QMainWindow, form_class):
         about_window_controller = AboutWindowController(self)
         about_window_controller.setModal(True)
         about_window_controller.exec_()
+
+    def handle_choosen_source_tab(self, index):
+        self.current_source = index
+        if self.current_source == self.WIKIPEDIA:
+            self.run_push_button.disconnect()
+            self.run_push_button.clicked.connect(self.handle_run_button)
+        else:
+            self.run_push_button.disconnect()
+            self.run_push_button.clicked.connect(lambda : print('youtube da eh !'))
+            
 
     def handle_preferences_menu_action(self):
         preferences_window_controller = PreferencesWindowController(self)
