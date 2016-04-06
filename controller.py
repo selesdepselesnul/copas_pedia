@@ -23,7 +23,7 @@ preferences_form_class = uic.loadUiType('ui/preferences.ui')[0]
 class Preferences:
 
     DB_FILE_NAME = 'cucok.db'
-    output_path = os.getcwd()
+    output_path = ''
     valid_image_formats = []
 
     @classmethod
@@ -34,7 +34,7 @@ class Preferences:
             c = conn.cursor()
             c.execute('CREATE TABLE OutputPath(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)')
             c.execute('CREATE TABLE ValidImageFormats(name TEXT, isActive INTEGER DEFAULT 1)')
-            c.execute("INSERT INTO OutputPath (name) VALUES (?)", (cls.output_path, ))
+            c.execute("INSERT INTO OutputPath (name) VALUES (?)", (os.getcwd(), ))
             for valid_image in ['.png', '.svg', '.jpg', '.gif']:
                 c.execute("INSERT INTO ValidImageFormats (name) VALUES (?)", (valid_image, ))
             conn.commit()
@@ -50,7 +50,7 @@ class Preferences:
                     print(val)
                     cls.valid_image_formats.append(val[0])
                 val = c.fetchone()
-        c.close()
+        conn.close()
 
     @classmethod
     def set_valid_image_format(cls, image, is_active):
@@ -58,7 +58,8 @@ class Preferences:
         c = conn.cursor()
         c.execute('UPDATE ValidImageFormats SET isActive = ? WHERE name = ?', (is_active, image))
         conn.commit()
-
+        conn.close()
+        cls.init()
 
     @classmethod
     def set_output_path(cls, path):
@@ -66,6 +67,9 @@ class Preferences:
         c = conn.cursor()
         c.execute('UPDATE OutputPath SET name = ? WHERE id = ?', (path, 1))
         conn.commit()
+        conn.close()
+        cls.init()
+
 
 class PreferencesWindowController(QDialog, preferences_form_class):
 
@@ -180,8 +184,10 @@ class MainWindowController(QMainWindow, form_class):
             full_path = html.escape(des_dir + '/' + PurePath(i).name)
             self.content_text_browser.append(
                     "<img src='{}' title='store at : {}'/><br/>".format(full_path, full_path))
-         
+        
         self.__load_finished()
+        QMessageBox.information(self, 'Download Completed',
+            'All of your donwload images store at : {}'.format(des_dir))
 
     def set_content_link(self, list_link):
         self.content_text_browser.setEnabled(True)
@@ -238,16 +244,20 @@ class MainWindowController(QMainWindow, form_class):
                             elif page == 'Images':
 
                                 print(wiki.images)
-                                if not os.path.exists(title):
-                                    os.mkdir(title)
 
+                                des_dir = Preferences.output_path + '/' + title 
                                 valid_images = []
+                                if not os.path.exists(des_dir):
+                                    print(des_dir)
+                                    os.mkdir(des_dir)   
+
                                 for i in wiki.images:
                                     if PurePath(i).suffix in Preferences.valid_image_formats:
-                                        wget.download(i, out=title)
+                                        print(i)
+                                        print(des_dir)
+                                        wget.download(i, out=des_dir)
                                         valid_images.append(i)
-                                self.content_image_arrived.emit(valid_images, 
-                                    Preferences.output_path + '/' + title)
+                                self.content_image_arrived.emit(valid_images, des_dir)
 
                             elif page == 'Summary':
                                 self.content_text_arrived.emit(wiki.summary)
