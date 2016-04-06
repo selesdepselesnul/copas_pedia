@@ -32,9 +32,9 @@ class Preferences:
             os.mknod(cls.DB_FILE_NAME)
             conn = sqlite3.connect(cls.DB_FILE_NAME)
             c = conn.cursor()
-            c.execute('CREATE TABLE OutputPath(name TEXT)')
+            c.execute('CREATE TABLE OutputPath(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)')
             c.execute('CREATE TABLE ValidImageFormats(name TEXT, isActive INTEGER DEFAULT 1)')
-            c.execute("INSERT INTO OutputPath VALUES (?)", (cls.output_path, ))
+            c.execute("INSERT INTO OutputPath (name) VALUES (?)", (cls.output_path, ))
             for valid_image in ['.png', '.svg', '.jpg', '.gif']:
                 c.execute("INSERT INTO ValidImageFormats (name) VALUES (?)", (valid_image, ))
             conn.commit()
@@ -42,7 +42,7 @@ class Preferences:
             conn = sqlite3.connect(cls.DB_FILE_NAME)
             c = conn.cursor()
             c.execute('SELECT * FROM OutputPath')
-            cls.output_path = c.fetchone()[0]
+            cls.output_path = c.fetchone()[1]
             c.execute('SELECT * FROM ValidImageFormats')
             val = c.fetchone()
             while val is not None:
@@ -53,12 +53,19 @@ class Preferences:
         c.close()
 
     @classmethod
-    def set(cls, image, is_active):
+    def set_valid_image_format(cls, image, is_active):
         conn = sqlite3.connect(cls.DB_FILE_NAME)
         c = conn.cursor()
         c.execute('UPDATE ValidImageFormats SET isActive = ? WHERE name = ?', (is_active, image))
         conn.commit()
 
+
+    @classmethod
+    def set_output_path(cls, path):
+        conn = sqlite3.connect(cls.DB_FILE_NAME)
+        c = conn.cursor()
+        c.execute('UPDATE OutputPath SET name = ? WHERE id = ?', (path, 1))
+        conn.commit()
 
 class PreferencesWindowController(QDialog, preferences_form_class):
 
@@ -102,25 +109,25 @@ class PreferencesWindowController(QDialog, preferences_form_class):
 
     def _save_preferences(self):
         if self.png_checkbox.isChecked():
-            Preferences.set('.png', 1)
+            Preferences.set_valid_image_format('.png', 1)
         else:
-            Preferences.set('.png', 0)
+            Preferences.set_valid_image_format('.png', 0)
         
         if self.svg_checkbox.isChecked():
-            Preferences.set('.svg', 1)
+            Preferences.set_valid_image_format('.svg', 1)
         else:
-            Preferences.set('.svg', 0)
+            Preferences.set_valid_image_format('.svg', 0)
 
         if self.jpg_checkbox.isChecked():
-            Preferences.set('.jpg', 1)
+            Preferences.set_valid_image_format('.jpg', 1)
         else:
-            Preferences.set('.jpg', 0)
+            Preferences.set_valid_image_format('.jpg', 0)
           
         if self.gif_checkbox.isChecked():
-            Preferences.set('.gif', 1)
+            Preferences.set_valid_image_format('.gif', 1)
         else:
-            Preferences.set('.gif', 0)
-        
+            Preferences.set_valid_image_format('.gif', 0)
+        Preferences.set_output_path(self.output_path_line_edit.text())
 
     def handle_choose_output_path(self):
         dialog = QFileDialog(self)
