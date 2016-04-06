@@ -300,8 +300,13 @@ class MainWindowController(QMainWindow, form_class):
             else:
                 self.run_push_button.setIcon(QIcon('images/run.png'))
                 self.run_push_button.setText('Download')
-                self.progress_thread.content_image_arrived.emit(self.progress_thread.valid_images, 
+                
+                if self.page_combo_box.currentText() == 'Images':
+                    self.progress_thread.content_image_arrived.emit(self.progress_thread.valid_images, 
                     self.progress_thread.des_dir)
+                else:
+                    self.__load_finished()
+
                 self.progress_thread.terminate()
 
 
