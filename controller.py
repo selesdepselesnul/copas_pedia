@@ -79,6 +79,7 @@ class PreferencesWindowController(QDialog, preferences_form_class):
         self.setupUi(self)
         self.output_path_line_edit.setText(Preferences.output_path)
         
+        self.edit_button.setIcon(QIcon('images/edit-preferences.png'))
         self.edit_button.clicked.connect(self.handle_edit_button)
         self.output_path_button.clicked.connect(self.handle_choose_output_path)
 
@@ -99,12 +100,14 @@ class PreferencesWindowController(QDialog, preferences_form_class):
     def handle_edit_button(self):
         if self.edit_button.text() == 'Edit':
             self.edit_button.setText('Save')
+            self.edit_button.setIcon(QIcon('images/save-preferences.png'))
             self.output_path_label.setEnabled(True)
             self.image_format_groupbox.setEnabled(True)
             self.output_path_line_edit.setEnabled(True)
             self.output_path_button.setEnabled(True)
         else:
             self.edit_button.setText('Edit')
+            self.edit_button.setIcon(QIcon('images/edit-preferences.png'))
             self.output_path_label.setEnabled(False)
             self.image_format_groupbox.setEnabled(False)
             self.output_path_line_edit.setEnabled(False)
