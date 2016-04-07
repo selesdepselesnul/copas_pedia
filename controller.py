@@ -189,6 +189,7 @@ class MainWindowController(QMainWindow, form_class):
         self.load_progressbar.setValue(100)
         self.run_push_button.setIcon(QIcon('images/run.png'))
         self.run_push_button.setText('Download')
+        self._set_disabled_widget(False)
 
     def set_content_image(self, list_image, des_dir):
         self.content_text_browser.clear()
@@ -292,15 +293,21 @@ class MainWindowController(QMainWindow, form_class):
             self.content_text_browser.clear()
             self.content_text_browser.setEnabled(False)
 
+    def _set_disabled_widget(self, is_disabled):
+        self.page_combo_box.setDisabled(is_disabled)
+        self.lang_combo_box.setDisabled(is_disabled)
+        self.title_line_edit.setDisabled(is_disabled)
+
     def handle_run_button(self):
             if self.run_push_button.text() == 'Download':
                 self._extract_from_wiki()
                 self.run_push_button.setIcon(QIcon('images/stop.png'))
                 self.run_push_button.setText('Stop')
+                self._set_disabled_widget(True)
             else:
                 self.run_push_button.setIcon(QIcon('images/run.png'))
                 self.run_push_button.setText('Download')
-                
+            
                 if self.page_combo_box.currentText() == 'Images':
                     self.progress_thread.content_image_arrived.emit(self.progress_thread.valid_images, 
                     self.progress_thread.des_dir)
@@ -308,6 +315,7 @@ class MainWindowController(QMainWindow, form_class):
                     self.__load_finished()
 
                 self.progress_thread.terminate()
+                self._set_disabled_widget(False)
 
 
            
